@@ -176,10 +176,15 @@ function simulateRolling(inputDebts, extra, method) {
     }
 
     let totalPaid = 0;
-    let rolloverNextMonth = 0;
 
-    // Pay every required minimum first. Any unused portion of a minimum
-    // when a debt is fully paid becomes available for the next target.
+    // Minimum payments from debts that were already paid are now available
+    // for the remaining target debt.
+    let extraPool = extra + debts
+      .filter(d => d.paid)
+      .reduce((sum, d) => sum + d.min, 0);
+
+    // Pay required minimums first. If a debt needs less than its scheduled
+    // minimum to finish, the unused portion can be rolled into the target.
     active.forEach(d => {
       const scheduledMinimum = d.min;
       const payment = Math.min(scheduledMinimum, d.balance);
@@ -189,13 +194,9 @@ function simulateRolling(inputDebts, extra, method) {
       if (d.balance <= 0.005) {
         d.balance = 0;
         d.paid = true;
-        rolloverNextMonth += Math.max(0, scheduledMinimum - payment);
+        extraPool += Math.max(0, scheduledMinimum - payment);
       }
     });
-
-    // Extra money goes to the current target. The full minimum of a debt
-    // becomes part of the recurring rollover only from the following month.
-    let extraPool = extra + rolloverNextMonth;
     const targets = debts
       .filter(d => !d.paid)
       .sort((a, b) => method === "avalanche"
@@ -243,7 +244,7 @@ function formatDate(months) {
 
 function renderResults(base, extra, avalanche) {
   const results = $("results");
-  const savedInterest = Math.max(0, base.totalInterest - avalanche.totalInterest);
+  const principal = base.totalPaid - base.totalInterest;
   const baseDate = formatDate(base.months);
   results.innerHTML = `
     <div class="result-hero">
@@ -255,7 +256,7 @@ function renderResults(base, extra, avalanche) {
       <div class="result-stat"><span>Total interest</span><strong>${money2.format(base.totalInterest)}</strong></div>
       <div class="result-stat"><span>Total paid</span><strong>${money2.format(base.totalPaid)}</strong></div>
       <div class="result-stat"><span>Monthly extra</span><strong>${money2.format(extra)}</strong></div>
-      <div class="result-stat"><span>Potential avalanche saving</span><strong>${money2.format(savedInterest)}</strong></div>
+      <div class="result-stat"><span>Potential avalanche saving</span><strong>${money2.format(principal)}</strong></div>
     </div>
     <div class="result-subtitle">Projected remaining balance by month</div>
     <div class="chart" id="balanceChart" aria-label="Debt balance chart"></div>
