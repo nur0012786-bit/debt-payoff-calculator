@@ -1,6 +1,6 @@
 :root{
   --ink:#102a24;
-  --muted:#61706b;
+  --muted:#52615b;
   --green:#0d3b2e;
   --green-2:#185744;
   --mint:#eaf2ed;
@@ -53,7 +53,7 @@ button{cursor:pointer}
 .results-panel{padding:34px;background:#f4f7f4;min-height:560px}
 .panel-title-row{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}
 .panel-title-row h3,.results-panel h3{margin:0;font-size:21px}
-.panel-title-row p{color:var(--muted);font-size:12px;margin:3px 0 0}
+.panel-title-row p{color:#4f5e58;font-size:12px;margin:3px 0 0}
 .secondary-btn{border:1px solid #c9d6d0;background:#fff;color:var(--green);border-radius:8px;padding:9px 12px;font-weight:700;font-size:12px;white-space:nowrap}
 .debt-list{display:grid;gap:12px}
 .debt-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}
@@ -69,7 +69,7 @@ button{cursor:pointer}
 .money-input{display:flex;align-items:center;border:1px solid #d7e0dc;background:#fff;border-radius:8px;padding:0 12px}
 .money-input span{color:#75827d}
 .money-input input{border:0;outline:0;width:100%;padding:11px 7px;background:transparent;color:var(--ink)}
-.extra-payment small{display:block;color:#78837f;font-size:11px;margin-top:6px}
+.extra-payment small{display:block;color:#53615b;font-size:11px;margin-top:6px}
 .calculate-btn{width:100%;margin-top:22px}
 .form-error{color:#a04747;font-size:12px;min-height:18px;margin:9px 0 0}
 .results-empty{text-align:center;max-width:300px;margin:140px auto 0;color:var(--muted)}
