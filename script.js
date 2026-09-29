@@ -20,16 +20,16 @@ function renderDebts() {
       </div>
       <div class="field-grid">
         <div class="field">
-          <label>Balance</label>
-          <input data-field="balance" type="number" min="0" step="0.01" value="${d.balance}" inputmode="decimal">
+          <label for="balance-${d.id}">Balance</label>
+          <input id="balance-${d.id}" data-field="balance" type="number" min="0" step="0.01" value="${d.balance}" inputmode="decimal">
         </div>
         <div class="field">
-          <label>APR %</label>
-          <input data-field="apr" type="number" min="0" max="100" step="0.01" value="${d.apr}" inputmode="decimal">
+          <label for="apr-${d.id}">APR %</label>
+          <input id="apr-${d.id}" data-field="apr" type="number" min="0" max="100" step="0.01" value="${d.apr}" inputmode="decimal">
         </div>
         <div class="field">
-          <label>Minimum / month</label>
-          <input data-field="min" type="number" min="0" step="1" value="${d.min}" inputmode="decimal">
+          <label for="min-${d.id}">Minimum / month</label>
+          <input id="min-${d.id}" data-field="min" type="number" min="0" step="1" value="${d.min}" inputmode="decimal">
         </div>
       </div>
     </div>`).join("");
