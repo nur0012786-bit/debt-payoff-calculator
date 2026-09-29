@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Debt Payoff Calculator — See When You'll Be Debt-Free</title>
+  <meta name="description" content="Use our free debt payoff calculator to estimate your debt-free date, total interest, and savings from extra payments. Compare debt snowball and avalanche strategies.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#0d3b2e">
+  <link rel="canonical" href="/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="Debt Payoff Calculator home">
+        <span class="brand-mark">$</span>
+        <span>DebtPayoff<span class="brand-accent">Calc</span></span>
+      </a>
+      <a class="header-link" href="#calculator">Calculator</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">FREE DEBT PLANNING TOOL</span>
+          <h1>See your path to <em>debt-free.</em></h1>
+          <p class="hero-text">Calculate your payoff date, total interest, and the impact of paying extra each month. Build a clear plan with simple numbers.</p>
+          <a class="primary-btn" href="#calculator">Start calculating <span>↓</span></a>
+          <div class="trust-row">
+            <span>✓ Free to use</span>
+            <span>✓ No sign-up</span>
+            <span>✓ Calculations in your browser</span>
+          </div>
+        </div>
+        <div class="hero-card" aria-label="Example debt payoff summary">
+          <div class="hero-card-top"><span>PAYOFF SNAPSHOT</span><span class="status-dot">●</span></div>
+          <div class="snapshot-date">Debt-free date</div>
+          <div class="snapshot-value">Aug 2032</div>
+          <div class="snapshot-line"><span>Extra payment</span><strong>$200 / month</strong></div>
+          <div class="snapshot-line"><span>Interest saved</span><strong>$7,320</strong></div>
+          <div class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="snapshot-foot">Your actual results depend on the balances, APRs and payments you enter.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calculator" class="calculator-section">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">DEBT PAYOFF CALCULATOR</span>
+          <h2>Build your payoff plan</h2>
+          <p>Enter your debts below. Add an optional extra monthly payment to see how much time and interest you could save.</p>
+        </div>
+
+        <div class="calculator-shell">
+          <div class="inputs-panel">
+            <div class="panel-title-row">
+              <div>
+                <h3>Your debts</h3>
+                <p>Add up to 6 debts for a more complete payoff plan.</p>
+              </div>
+              <button id="addDebt" class="secondary-btn" type="button">+ Add debt</button>
+            </div>
+
+            <div id="debtList" class="debt-list"></div>
+
+            <div class="extra-payment">
+              <label for="extraPayment">Extra payment each month</label>
+              <div class="money-input">
+                <span>$</span>
+                <input id="extraPayment" type="number" min="0" step="25" value="0" inputmode="decimal" aria-describedby="extraHelp">
+              </div>
+              <small id="extraHelp">This amount is applied in addition to the minimum payments.</small>
+            </div>
+
+            <button id="calculate" class="calculate-btn" type="button">Calculate my payoff plan <span>→</span></button>
+            <p id="formError" class="form-error" role="alert" aria-live="polite"></p>
+          </div>
+
+          <div class="results-panel" id="results" aria-live="polite">
+            <div class="results-empty">
+              <div class="empty-icon">↗</div>
+              <h3>Your payoff plan will appear here</h3>
+              <p>Enter your debt balances, APRs and minimum payments, then calculate your plan.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="comparison" class="comparison hidden">
+          <div class="comparison-head">
+            <div>
+              <span class="eyebrow">PAYOFF STRATEGIES</span>
+              <h2>Snowball vs. avalanche</h2>
+              <p>Both methods can organize your payoff plan. The difference is which debt receives your extra payment first.</p>
+            </div>
+          </div>
+          <div class="strategy-grid">
+            <article class="strategy-card">
+              <div class="strategy-icon snowball">S</div>
+              <h3>Debt snowball</h3>
+              <p>Focus your extra payment on the smallest balance first, then roll that payment into the next debt.</p>
+              <div class="strategy-stat"><span>Payoff time</span><strong id="snowballMonths">—</strong></div>
+              <div class="strategy-stat"><span>Total interest</span><strong id="snowballInterest">—</strong></div>
+            </article>
+            <article class="strategy-card featured">
+              <div class="strategy-icon avalanche">A</div>
+              <h3>Debt avalanche</h3>
+              <p>Focus your extra payment on the highest APR first, then roll the freed payment into the next debt.</p>
+              <div class="strategy-stat"><span>Payoff time</span><strong id="avalancheMonths">—</strong></div>
+              <div class="strategy-stat"><span>Total interest</span><strong id="avalancheInterest">—</strong></div>
+            </article>
+          </div>
+          <div class="comparison-note" id="comparisonNote"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seo-section">
+      <div class="container content-narrow">
+        <span class="eyebrow">UNDERSTANDING YOUR NUMBERS</span>
+        <h2>How the Debt Payoff Calculator works</h2>
+        <p>A debt payoff calculator estimates how long it may take to pay down your balances based on the information you provide. It can also show how an additional monthly payment changes your payoff timeline and total interest.</p>
+
+        <h3>What you need to enter</h3>
+        <p>For each debt, enter the current balance, annual percentage rate (APR), and required minimum monthly payment. If you can consistently pay more than the minimums, enter that amount in the extra-payment field. The calculator then models the balances month by month.</p>
+
+        <h3>Why extra payments matter</h3>
+        <p>Interest is generally calculated from the outstanding balance. When additional money reduces principal sooner, future interest can be lower. The exact savings depend on the APR, balance, payment schedule, and how your lender applies payments.</p>
+
+        <h3>Snowball and avalanche methods</h3>
+        <p>The debt snowball method directs extra money toward the smallest balance first. The debt avalanche method directs extra money toward the highest-interest debt first. This calculator lets you compare the projected timelines and interest totals using the same debts and extra payment.</p>
+
+        <h3>Example</h3>
+        <p>Suppose you have several debts with different balances and APRs. Increasing your monthly payment by $100 does not simply reduce the payoff period by a fixed number of months. As one debt is paid off, its required payment can be redirected to another balance. That is why a month-by-month payoff schedule is useful.</p>
+
+        <h3>Important assumptions</h3>
+        <p>This calculator is an estimate, not a statement from your lender. It assumes the APR and minimum payments you enter remain unchanged and that payments are applied as modeled. Real credit-card and loan terms can differ, including fees, changing rates, payment timing, and lender-specific rules.</p>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <div class="container content-narrow">
+        <span class="eyebrow">FAQ</span>
+        <h2>Debt payoff calculator questions</h2>
+        <details>
+          <summary>What is a debt payoff calculator?</summary>
+          <p>It is a planning tool that estimates the time and interest required to repay debt using a balance, APR, and payment amount. It can also model additional payments.</p>
+        </details>
+        <details>
+          <summary>Does paying extra reduce interest?</summary>
+          <p>Paying principal earlier can reduce the balance on which future interest is calculated. The amount saved depends on the debt terms and how the lender applies payments.</p>
+        </details>
+        <details>
+          <summary>What is the difference between snowball and avalanche?</summary>
+          <p>Snowball prioritizes the smallest balance. Avalanche prioritizes the highest APR. The calculator compares the projected results using your own numbers.</p>
+        </details>
+        <details>
+          <summary>Is this calculator financial advice?</summary>
+          <p>No. It is an educational planning tool. Your lender's terms and your personal financial circumstances should be considered before making financial decisions.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© 2026 DebtPayoffCalc</span>
+      <span>Debt planning made simple.</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
