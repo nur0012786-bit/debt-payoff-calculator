@@ -70,78 +70,6 @@ function validate(debts, extra) {
   return "";
 }
 
-function simulate(inputDebts, extra, method) {
-  let debts = inputDebts.map(d => ({...d, balance: Number(d.balance)}));
-  let month = 0;
-  let totalInterest = 0;
-  let schedule = [];
-  let guard = 0;
-
-  while (debts.some(d => d.balance > 0.005) && guard++ < 1200) {
-    month++;
-    if (month > 1200) return { error: "The entered payments are not enough to pay off the debt within 100 years." };
-
-    let monthInterest = 0;
-    debts.forEach(d => {
-      if (d.balance <= 0) return;
-      const interest = d.balance * (d.apr / 100 / 12);
-      d.interest = interest;
-      d.balance += interest;
-      monthInterest += interest;
-    });
-    totalInterest += monthInterest;
-
-    let availableExtra = extra;
-    const active = debts.filter(d => d.balance > 0.005);
-    const order = [...active].sort((a,b) => method === "avalanche"
-      ? (b.apr - a.apr) || (a.balance - b.balance)
-      : (a.balance - b.balance) || (b.apr - a.apr));
-
-    // Pay required minimums first, capped at the current balance.
-    let totalPaid = 0;
-    for (const d of active) {
-      const payment = Math.min(d.min, d.balance);
-      d.balance -= payment;
-      totalPaid += payment;
-    }
-
-    // Any extra money goes to the current priority debt, rolling over as debts disappear.
-    for (const d of order) {
-      if (availableExtra <= 0) break;
-      if (d.balance <= 0) continue;
-      const payment = Math.min(availableExtra, d.balance);
-      d.balance -= payment;
-      availableExtra -= payment;
-      totalPaid += payment;
-    }
-
-    // If a minimum payment paid off a debt, its unused amount is also rolled into the priority debt.
-    let freed = 0;
-    active.forEach(d => {
-      if (d.balance <= 0.005) {
-        const minPaid = Math.min(d.min, d.balance + d.min);
-        // The exact rollover is approximated by the remaining scheduled minimum.
-        freed += Math.max(0, d.min - minPaid);
-      }
-    });
-
-    // Recalculate remaining balances for the schedule.
-    const remaining = debts.reduce((sum,d) => sum + Math.max(0,d.balance), 0);
-    schedule.push({ month, payment: totalPaid, interest: monthInterest, balance: remaining });
-
-    if (month > 1 && totalPaid <= monthInterest && remaining >= inputDebts.reduce((s,d)=>s+d.balance,0)) {
-      return { error: "The payment amounts do not reduce the debt. Increase the minimum payments." };
-    }
-  }
-
-  return {
-    months: month,
-    totalInterest,
-    totalPaid: inputDebts.reduce((s,d)=>s+d.balance,0) + totalInterest,
-    schedule
-  };
-}
-
 function simulateRolling(inputDebts, extra, method) {
   const debts = inputDebts.map(d => ({
     ...d,
@@ -256,7 +184,7 @@ function renderResults(base, extra, avalanche) {
       <div class="result-stat"><span>Total interest</span><strong>${money2.format(base.totalInterest)}</strong></div>
       <div class="result-stat"><span>Total paid</span><strong>${money2.format(base.totalPaid)}</strong></div>
       <div class="result-stat"><span>Monthly extra</span><strong>${money2.format(extra)}</strong></div>
-      <div class="result-stat"><span>Potential avalanche saving</span><strong>${money2.format(principal)}</strong></div>
+      <div class="result-stat"><span>Principal paid</span><strong>${money2.format(principal)}</strong></div>
     </div>
     <div class="result-subtitle">Projected remaining balance by month</div>
     <div class="chart" id="balanceChart" aria-label="Debt balance chart"></div>
