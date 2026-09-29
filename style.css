@@ -12,7 +12,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;color:var(--ink);background:#fff;font-family:"DM Sans",Arial,sans-serif;line-height:1.6}
+body{margin:0;color:var(--ink);background:#fff;font-family:Arial,"Helvetica Neue",sans-serif;line-height:1.6}
 button,input{font:inherit}
 button{cursor:pointer}
 .container{width:min(1120px,calc(100% - 40px));margin:auto}
@@ -25,7 +25,7 @@ button{cursor:pointer}
 .hero{background:linear-gradient(135deg,#f7f8f4 0%,#edf4ef 100%);padding:86px 0 82px;border-bottom:1px solid var(--line)}
 .hero-grid{display:grid;grid-template-columns:1.05fr .75fr;gap:80px;align-items:center}
 .eyebrow{display:inline-block;color:var(--green-2);font-size:11px;font-weight:700;letter-spacing:2px}
-.hero h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(48px,6vw,76px);line-height:1.03;letter-spacing:-2px;margin:14px 0 22px;max-width:700px}
+.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(48px,6vw,76px);line-height:1.03;letter-spacing:-2px;margin:14px 0 22px;max-width:700px}
 .hero h1 em{color:var(--green-2);font-style:normal}
 .hero-text{font-size:18px;color:var(--muted);max-width:650px;margin:0 0 28px}
 .primary-btn,.calculate-btn{display:inline-flex;align-items:center;justify-content:center;gap:20px;border:0;background:var(--green);color:#fff;text-decoration:none;border-radius:10px;padding:15px 21px;font-weight:700;box-shadow:0 8px 20px rgba(13,59,46,.18)}
