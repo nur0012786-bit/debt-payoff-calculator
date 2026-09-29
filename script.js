@@ -143,13 +143,22 @@ function simulate(inputDebts, extra, method) {
 }
 
 function simulateRolling(inputDebts, extra, method) {
-  let debts = inputDebts.map(d => ({...d, balance:Number(d.balance)}));
-  let month = 0, totalInterest = 0, schedule = [], guard = 0;
+  const debts = inputDebts.map(d => ({
+    ...d,
+    balance: Number(d.balance),
+    paid: false
+  }));
+  let month = 0;
+  let totalInterest = 0;
+  const schedule = [];
 
-  while (debts.some(d => d.balance > 0.005) && guard++ < 1200) {
+  while (debts.some(d => !d.paid) && month < 1200) {
     month++;
-    let active = debts.filter(d => d.balance > 0.005);
+
+    const active = debts.filter(d => !d.paid);
     let interestThisMonth = 0;
+
+    // Accrue one month of interest before payments.
     active.forEach(d => {
       const interest = d.balance * d.apr / 100 / 12;
       d.balance += interest;
@@ -157,42 +166,73 @@ function simulateRolling(inputDebts, extra, method) {
     });
     totalInterest += interestThisMonth;
 
-    // Minimums are paid first.
-    let basePayment = 0;
+    // A debt whose minimum payment does not cover its monthly interest
+    // cannot amortize under the entered assumptions.
+    const nonAmortizing = active.find(d => d.min <= d.balance * d.apr / 100 / 12 && d.balance > d.min + 0.005);
+    if (nonAmortizing) {
+      return {
+        error: `The minimum payment for "${nonAmortizing.name || "a debt"}" is not enough to reduce its balance at the entered APR. Increase that payment.`
+      };
+    }
+
+    let totalPaid = 0;
+    let rolloverNextMonth = 0;
+
+    // Pay every required minimum first. Any unused portion of a minimum
+    // when a debt is fully paid becomes available for the next target.
     active.forEach(d => {
-      const p = Math.min(d.min, d.balance);
-      d.balance -= p;
-      basePayment += p;
-    });
+      const scheduledMinimum = d.min;
+      const payment = Math.min(scheduledMinimum, d.balance);
+      d.balance -= payment;
+      totalPaid += payment;
 
-    // Roll every freed minimum plus the chosen extra into the target debt.
-    let pool = extra;
-    const targetOrder = [...debts.filter(d => d.balance > 0.005)].sort((a,b) =>
-      method === "avalanche"
-        ? (b.apr-a.apr) || (a.balance-b.balance)
-        : (a.balance-b.balance) || (b.apr-a.apr)
-    );
-
-    // Track debts that were fully paid by minimums and add their scheduled minimums.
-    debts.forEach(d => {
-      if (d.balance <= 0.005 && d.min > 0) {
-        pool += d.min;
+      if (d.balance <= 0.005) {
+        d.balance = 0;
+        d.paid = true;
+        rolloverNextMonth += Math.max(0, scheduledMinimum - payment);
       }
     });
 
-    if (targetOrder[0]) {
-      const target = targetOrder[0];
-      const p = Math.min(pool, target.balance);
-      target.balance -= p;
-      basePayment += p;
+    // Extra money goes to the current target. The full minimum of a debt
+    // becomes part of the recurring rollover only from the following month.
+    let extraPool = extra + rolloverNextMonth;
+    const targets = debts
+      .filter(d => !d.paid)
+      .sort((a, b) => method === "avalanche"
+        ? (b.apr - a.apr) || (a.balance - b.balance)
+        : (a.balance - b.balance) || (b.apr - a.apr));
+
+    if (targets[0] && extraPool > 0) {
+      const target = targets[0];
+      const payment = Math.min(extraPool, target.balance);
+      target.balance -= payment;
+      totalPaid += payment;
+      if (target.balance <= 0.005) {
+        target.balance = 0;
+        target.paid = true;
+      }
     }
 
-    const remaining = debts.reduce((sum,d)=>sum+Math.max(0,d.balance),0);
-    schedule.push({month, payment:basePayment, interest:interestThisMonth, balance:remaining});
+    const remaining = debts.reduce((sum, d) => sum + (d.paid ? 0 : d.balance), 0);
+    schedule.push({
+      month,
+      payment: totalPaid,
+      interest: interestThisMonth,
+      balance: remaining
+    });
   }
 
-  if (guard >= 1200) return {error:"The entered payments are not enough to pay off the debt within 100 years."};
-  return {months:month,totalInterest,totalPaid:inputDebts.reduce((s,d)=>s+d.balance,0)+totalInterest,schedule};
+  if (debts.some(d => !d.paid)) {
+    return { error: "The entered payments are not enough to pay off the debt within 100 years." };
+  }
+
+  const principal = inputDebts.reduce((sum, d) => sum + Number(d.balance), 0);
+  return {
+    months: month,
+    totalInterest,
+    totalPaid: principal + totalInterest,
+    schedule
+  };
 }
 
 function formatDate(months) {
